@@ -3,15 +3,21 @@
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 		<home-swiper :banners="banners"/>
 		<Home-Recommend :recommends="recommends"/>
-		<home-feature></home-feature>
+		<home-feature />
+		<tab-control :titles="['新款','流行','精选']" />
+		<ul><li></li><li></li><li></li><li></li></ul>
 	</div>
 </template>
 
 <script>
-	import NavBar from '../../components/common/navbar/NavBar'
 	import HomeSwiper from './childrencomponents/Home-Swiper.vue'
 	import HomeRecommend from './childrencomponents/Home-Recommend.vue'
 	import HomeFeature from './childrencomponents/Home-Feature.vue'
+	
+	import NavBar from '../../components/common/navbar/NavBar'
+	import TabControl from '../../components/content/tabControl/TabControl.vue'
+	
+	
 	import {getHomeMultidata} from '../../network/home'
 	
 	export default {
@@ -20,7 +26,8 @@
 			NavBar,
 			HomeSwiper,
 			HomeRecommend,
-			HomeFeature
+			HomeFeature,
+			TabControl
 		},
 		data(){
 			return{
