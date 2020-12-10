@@ -5,7 +5,8 @@
 		<Home-Recommend :recommends="recommends"/>
 		<home-feature />
 		<tab-control :titles="['新款','流行','精选']" />
-		<ul><li></li><li></li><li></li><li></li></ul>
+		<goods-list :goods="goods['pop'].list"/>
+		<ul><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li></ul>
 	</div>
 </template>
 
@@ -17,8 +18,10 @@
 	import NavBar from '../../components/common/navbar/NavBar'
 	import TabControl from '../../components/content/tabControl/TabControl.vue'
 	
+	import GoodsList from '../../components/content/goods/GoodsList.vue'
 	
-	import {getHomeMultidata} from '../../network/home'
+	
+	import {getHomeMultidata,getHomeGoods} from '../../network/home'
 	
 	export default {
 		name: "Home",
@@ -27,20 +30,42 @@
 			HomeSwiper,
 			HomeRecommend,
 			HomeFeature,
-			TabControl
+			TabControl,
+			GoodsList
 		},
 		data(){
 			return{
 				banners:[],
-				recommends:[]
+				recommends:[],
+				 goods:{
+					'pop':{page:0,list:[]},
+					'new':{page:0,list:[]},
+					'sell':{page:0,list:[]}
+				}
 			}
 		},
-		created() {
+		created(){
 			//1.请求数据
-			getHomeMultidata().then(res =>{
-				this.banners=res.data.banner.list;
-				this.recommends=res.data.recommend.list;
-			})
+			this.getHomeMultidata()
+			//2.请求商品数据
+			this.getHomeGoods('pop')
+			this.getHomeGoods('new')
+			this.getHomeGoods('sell')
+		},
+		methods:{
+			getHomeMultidata(){
+				getHomeMultidata().then(res =>{
+					this.banners=res.data.banner.list;
+					this.recommends=res.data.recommend.list;
+				})
+			},
+			getHomeGoods(type){
+				const page = this.goods[type].page+1;
+				getHomeGoods(type,page).then(res =>{
+					this.goods[type].list.push(...res.data.list)
+					this.goods[type].page +=1
+				})
+			}
 		}
 	}
 </script>
@@ -56,5 +81,10 @@
 		top: 0px;
 		left: 0px;
 		right: 0px;
+		z-index: 9;
+	}
+	.tab-control{
+		position: sticky;
+		top: 44px;
 	}
 </style>
