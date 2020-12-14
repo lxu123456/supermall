@@ -1,12 +1,13 @@
 <template>
 	<div id="home">
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-		<home-swiper :banners="banners"/>
-		<Home-Recommend :recommends="recommends"/>
-		<home-feature />
-		<tab-control :titles="['新款','流行','精选']" @tabClick="tabClick" />
-		<goods-list :goods="showGoods"/>
-		<ul><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li><li>2323</li></ul>
+		<scroll class="content">
+			<home-swiper :banners="banners"/>
+			<Home-Recommend :recommends="recommends"/>
+			<home-feature />
+			<tab-control :titles="['新款','流行','精选']" @tabClick="tabClick" />
+			<goods-list :goods="showGoods"/>
+		</scroll>
 	</div>
 </template>
 
@@ -19,6 +20,7 @@
 	import TabControl from '../../components/content/tabControl/TabControl.vue'
 	
 	import GoodsList from '../../components/content/goods/GoodsList.vue'
+	import Scroll from '../../components/common/scroll/Scroll.vue'
 	
 	
 	import {getHomeMultidata,getHomeGoods} from '../../network/home'
@@ -31,7 +33,8 @@
 			HomeRecommend,
 			HomeFeature,
 			TabControl,
-			GoodsList
+			GoodsList,
+			Scroll
 		},
 		data(){
 			return{
@@ -97,7 +100,9 @@
 
 <style scoped>
 	#home{
-		padding-top: 44px;
+		/* padding-top: 44px; */
+		height: 100vh;
+		position: relative;
 	}
 	.home-nav{
 		background-color: var(--color-tint);
@@ -112,5 +117,13 @@
 		position: sticky;
 		top: 44px;
 		z-index: 9;
+	}
+	.content{
+		overflow: hidden;
+		position: absolute;
+		top: 44px;
+		bottom: 49px;
+		left: 0px;
+		right: 0px;
 	}
 </style>
