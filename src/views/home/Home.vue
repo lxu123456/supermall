@@ -1,13 +1,15 @@
 <template>
 	<div id="home">
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-		<scroll class="content">
+		<scroll class="content" ref="scroll" v-bind:probeType="3" @scroll="contentScroll">
 			<home-swiper :banners="banners"/>
 			<Home-Recommend :recommends="recommends"/>
 			<home-feature />
 			<tab-control :titles="['新款','流行','精选']" @tabClick="tabClick" />
 			<goods-list :goods="showGoods"/>
 		</scroll>
+		<!--当给组件进行事件监听的时候，需要.native-->
+		<back-top @click.native="backTopClick" v-show="isShowBackTop" />
 	</div>
 </template>
 
@@ -21,6 +23,7 @@
 	
 	import GoodsList from '../../components/content/goods/GoodsList.vue'
 	import Scroll from '../../components/common/scroll/Scroll.vue'
+	import BackTop from '../../components/content/backTop/BackTop.vue'
 	
 	
 	import {getHomeMultidata,getHomeGoods} from '../../network/home'
@@ -34,7 +37,8 @@
 			HomeFeature,
 			TabControl,
 			GoodsList,
-			Scroll
+			Scroll,
+			BackTop
 		},
 		data(){
 			return{
@@ -45,7 +49,8 @@
 					'new':{page:0,list:[]},
 					'sell':{page:0,list:[]}
 				},
-				currentType:'pop'
+				currentType:'pop',
+				isShowBackTop:false
 			}
 		},
 		computed:{
@@ -77,6 +82,12 @@
 						this.currentType='sell'
 						break
 				}
+			},
+			backTopClick(){
+				this.$refs.scroll.scrollTo(0,0,500)
+			},
+			contentScroll(position){
+				this.isShowBackTop = -position.y>1000
 			},
 			/**
 			 * 网络请求相关的
