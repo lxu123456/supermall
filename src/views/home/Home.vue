@@ -1,7 +1,7 @@
 <template>
 	<div id="home">
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
-		<scroll class="content" ref="scroll" v-bind:probeType="3" @scroll="contentScroll">
+		<scroll class="content" ref="scroll" v-bind:probeType="3" :pullUpload="true" @scroll="contentScroll" @pullingUp="loadMore">
 			<home-swiper :banners="banners"/>
 			<Home-Recommend :recommends="recommends"/>
 			<home-feature />
@@ -89,6 +89,9 @@
 			contentScroll(position){
 				this.isShowBackTop = -position.y>1000
 			},
+			loadMore(){
+				this.getHomeGoods(this.currentType)
+			},
 			/**
 			 * 网络请求相关的
 			 */
@@ -103,6 +106,7 @@
 				getHomeGoods(type,page).then(res =>{
 					this.goods[type].list.push(...res.data.list)
 					this.goods[type].page +=1
+					this.$refs.scroll.finishPullUp()
 				})
 			}
 		}
