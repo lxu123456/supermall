@@ -48,6 +48,10 @@
 			},
 			finishPullUp(){
 				this.scroll.finishPullUp()
+			},
+			refresh(){
+				console.log('refresh')
+				this.scroll.refresh()
 			}
 		}
 	}
