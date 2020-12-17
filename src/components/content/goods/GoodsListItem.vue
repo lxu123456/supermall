@@ -22,6 +22,7 @@
 		},
 		methods:{
 			imageLoaded(){
+				//事件总线，main.js
 				this.$bus.$emit('itemImageLoad')
 			}
 		}
