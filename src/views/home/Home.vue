@@ -50,7 +50,8 @@
 					'sell':{page:0,list:[]}
 				},
 				currentType:'pop',
-				isShowBackTop:false
+				isShowBackTop:false,
+				fun:null
 			}
 		},
 		computed:{
@@ -69,10 +70,28 @@
 		mounted() {
 			//3.监听图片加载事件
 			this.$bus.$on('itemImageLoad',() => {
-				this.$refs.scroll.refresh()
+				this.debounce(this.$refs.scroll.refresh,50)
 			})
 		},
 		methods:{
+			debounce(fn,wait){
+				if (this.fun!==null){
+					clearTimeout(this.fun)
+				}
+				this.fun = setTimeout(fn,wait)
+			},
+			/**
+			 * 防抖动处理
+			 */
+		 	debounce2(func,delay){
+				let timer=0
+				return function(){
+					if(timer) clearTimeout(timer)
+					timer = setTimeout(function(){
+						func.apply(this)
+					},delay)
+				}
+			}, 
 			/**
 			 * 事件监听相关的
 			 */
