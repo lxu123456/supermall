@@ -3,7 +3,7 @@
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
 		<tab-control :titles="['新款','流行','精选']"
 					 @tabClick="tabClick" 
-					 ref="tabControl"
+					 ref="tabControl1"
 					 class="tab-control"
 					 v-show="isFixed"/>
 		<scroll class="content" ref="scroll" v-bind:probeType="3" :pullUpload="true" @scroll="contentScroll" @pullingUp="loadMore">
@@ -12,7 +12,7 @@
 			<home-feature />
 			<tab-control :titles="['新款','流行','精选']" 
 						 @tabClick="tabClick" 
-						 ref="tabControl"/>
+						 ref="tabControl2"/>
 			<goods-list :goods="showGoods"/>
 		</scroll>
 		<!--当给组件进行事件监听的时候，需要.native-->
@@ -108,6 +108,9 @@
 						this.currentType='sell'
 						break
 				}
+				//解决better-control 吸顶效果后，点击tab显示不一致问题
+				this.$refs.tabControl1.currentIndex=index
+				this.$refs.tabControl2.currentIndex=index
 			},
 			backTopClick(){
 				this.$refs.scroll.scrollTo(0,0,500)
@@ -125,7 +128,7 @@
 			swiperImageLoaded(){
 				//获取tabControl的offsetTop
 				//所有组件都有一个$el属性，用于获取组件中的元素
-				this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+				this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop
 				console.log(this.tabOffsetTop)
 			},
 			/**
