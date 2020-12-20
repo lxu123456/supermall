@@ -62,13 +62,27 @@
 				isShowBackTop:false,
 				fun:null,
 				tabOffsetTop:0,
-				isFixed:false
+				isFixed:false,
+				scrollY:0
 			}
 		},
 		computed:{
 			showGoods(){
 				return this.goods[this.currentType].list
 			}
+		},
+		//离开tab页签会调用此函数,可以通过keep-alive取消
+		destroyed() {
+			console.log('destoryed...')
+		},
+		//进入tab页签会调用
+		activated() {
+			this.$refs.scroll.scrollTo(0,this.scrollY,0)
+			this.$refs.scroll.refresh()
+		},
+		//离开tab页签会调用
+		deactivated() {
+			this.scrollY=this.$refs.scroll.scrollY()
 		},
 		created(){
 			//1.请求数据
