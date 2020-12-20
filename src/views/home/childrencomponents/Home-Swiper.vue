@@ -2,7 +2,7 @@
 	<swiper>
 		<swiper-item v-for="item in banners" :key="item.label">
 			<a :href="item.link">
-				<img :src="item.image" alt="" />
+				<img :src="item.image" alt="" @load="swiperImageLoaded"/>
 			</a>
 		</swiper-item>
 	</swiper>
@@ -20,9 +20,22 @@
 				}
 			}
 		},
+		data(){
+			return{
+				isLoaded:false//轮播图加载完成事件，控制事件只发出去一次
+			}
+		},
 		components:{
 			Swiper,
 			SwiperItem
+		},
+		methods:{
+			swiperImageLoaded(){
+				if(!this.isLoaded){
+					this.$emit('swiperImageLoaded')
+					this.isLoaded=true
+				}
+			}
 		}
 	}
 </script>

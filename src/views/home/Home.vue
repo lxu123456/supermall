@@ -1,11 +1,18 @@
 <template>
 	<div id="home">
 		<nav-bar class="home-nav"><div slot="center">购物街</div></nav-bar>
+		<tab-control :titles="['新款','流行','精选']"
+					 @tabClick="tabClick" 
+					 ref="tabControl"
+					 class="tab-control"
+					 v-show="isFixed"/>
 		<scroll class="content" ref="scroll" v-bind:probeType="3" :pullUpload="true" @scroll="contentScroll" @pullingUp="loadMore">
-			<home-swiper :banners="banners"/>
+			<home-swiper :banners="banners" @swiperImageLoaded='swiperImageLoaded'/>
 			<Home-Recommend :recommends="recommends"/>
 			<home-feature />
-			<tab-control :titles="['新款','流行','精选']" @tabClick="tabClick" />
+			<tab-control :titles="['新款','流行','精选']" 
+						 @tabClick="tabClick" 
+						 ref="tabControl"/>
 			<goods-list :goods="showGoods"/>
 		</scroll>
 		<!--当给组件进行事件监听的时候，需要.native-->
@@ -27,6 +34,8 @@
 	
 	
 	import {getHomeMultidata,getHomeGoods} from '../../network/home'
+	
+	import {debounce2} from '../../common/commonutils.js'
 	
 	export default {
 		name: "Home",
@@ -51,7 +60,9 @@
 				},
 				currentType:'pop',
 				isShowBackTop:false,
-				fun:null
+				fun:null,
+				tabOffsetTop:0,
+				isFixed:false
 			}
 		},
 		computed:{
@@ -68,9 +79,11 @@
 			this.getHomeGoods('sell')
 		},
 		mounted() {
-			//3.监听图片加载事件
+			const refresh = debounce2(this.$refs.scroll.refresh,50)
+			//1.监听图片加载事件
 			this.$bus.$on('itemImageLoad',() => {
-				this.debounce(this.$refs.scroll.refresh,50)
+				//this.debounce(this.$refs.scroll.refresh,50)
+				refresh()
 			})
 		},
 		methods:{
@@ -80,18 +93,6 @@
 				}
 				this.fun = setTimeout(fn,wait)
 			},
-			/**
-			 * 防抖动处理
-			 */
-		 	debounce2(func,delay){
-				let timer=0
-				return function(){
-					if(timer) clearTimeout(timer)
-					timer = setTimeout(function(){
-						func.apply(this)
-					},delay)
-				}
-			}, 
 			/**
 			 * 事件监听相关的
 			 */
@@ -112,10 +113,20 @@
 				this.$refs.scroll.scrollTo(0,0,500)
 			},
 			contentScroll(position){
+				//1.判断backTop是否显示
 				this.isShowBackTop = -position.y>1000
+				//2.判断tabControl是否吸顶（position:fixed）
+				this.isFixed=-position.y >this.tabOffsetTop
 			},
 			loadMore(){
 				this.getHomeGoods(this.currentType)
+			},
+			//监听轮播图加载完毕
+			swiperImageLoaded(){
+				//获取tabControl的offsetTop
+				//所有组件都有一个$el属性，用于获取组件中的元素
+				this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+				console.log(this.tabOffsetTop)
 			},
 			/**
 			 * 网络请求相关的
@@ -147,17 +158,25 @@
 	.home-nav{
 		background-color: var(--color-tint);
 		color: #FFFFFF;
-		position: fixed;
+		/*下面的css是原生滚动需要设置的，better-scroll就不需要这个了*/
+		/* position: fixed;
 		top: 0px;
 		left: 0px;
 		right: 0px;
-		z-index: 9;
+		z-index: 9; */
 	}
-	.tab-control{
+	
+	.isFixed{
+		position: fixed;
+		left: 0px;
+		right: 0px;
+		top: 44px;
+	}
+	/* .tab-control{
 		position: sticky;
 		top: 44px;
 		z-index: 9;
-	}
+	} */
 	.content{
 		overflow: hidden;
 		position: absolute;
@@ -165,5 +184,10 @@
 		bottom: 49px;
 		left: 0px;
 		right: 0px;
+	}
+	
+	.tab-control{
+		position: relative;
+		z-index: 9;
 	}
 </style>
