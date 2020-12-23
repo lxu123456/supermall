@@ -6,7 +6,11 @@
 					 ref="tabControl1"
 					 class="tab-control"
 					 v-show="isFixed"/>
-		<scroll class="content" ref="scroll" v-bind:probeType="3" :pullUpload="true" @scroll="contentScroll" @pullingUp="loadMore">
+		<scroll class="content" ref="scroll" 
+				v-bind:probeType="3" 
+				:pullUpload="true" 
+				@scroll="contentScroll" 
+				@pullingUp="loadMore">
 			<home-swiper :banners="banners" @swiperImageLoaded='swiperImageLoaded'/>
 			<Home-Recommend :recommends="recommends"/>
 			<home-feature />
