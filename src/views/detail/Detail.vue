@@ -8,7 +8,7 @@
 		      <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
 			  <detail-param-info :param-info="detailParamInfo"/>
 			  <detai-comment-info :comment-info="commentInfo"/>
-			  <!-- <goods-list :goods="recommends"/> -->
+			  <detail-goods-list :goods="recommends" />
 		</scroll>
 	</div>
 </template>
@@ -22,11 +22,12 @@
 	import DetailGoodsInfo from './childrencomponents/DetailGoodsInfo.vue'
 	import DetailParamInfo from './childrencomponents/DetailParamInfo.vue'
 	import DetaiCommentInfo from './childrencomponents/DetailCommentInfo.vue'
-	//import GoodsList from '../../components/content/goods/GoodsList.vue'
+	import DetailGoodsList from '../../components/content/goods/GoodsList.vue'
 	
 	import Scroll from 'components/common/scroll/Scroll'
 	
 	import {getDetail,Goods,Shop,GoodsParam,getRecommend} from '../../network/detail.js'
+	import {imageListenerMixin} from '../../common/mixin.js'
 	
 	export default{
 		name:"Detail",
@@ -50,9 +51,10 @@
 			DetailGoodsInfo,
 			DetailParamInfo,
 			DetaiCommentInfo,
-			//GoodsList,
+			DetailGoodsList,
 			Scroll
 		},
+		mixins:[imageListenerMixin],
 		created() {
 			//1.商品id保存
 			this.iid = this.$route.params.iid
@@ -79,11 +81,17 @@
 			})
 			
 		},
+		mounted() {
+			
+		},
+		destroyed() {
+			this.$bus.$off('itemImageLoad',this.imageListener)
+		},
 		 methods: {
-		      imageLoad() {
-		        this.$refs.scroll.refresh()
-		      }
-		    }
+			  imageLoad() {
+				this.$refs.scroll.refresh()
+			  }
+			}
 	}
 </script>
 	

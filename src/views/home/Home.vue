@@ -39,7 +39,8 @@
 	
 	import {getHomeMultidata,getHomeGoods} from '../../network/home'
 	
-	import {debounce2} from '../../common/commonutils.js'
+	//import {debounce2} from '../../common/commonutils.js'
+	import {imageListenerMixin} from '../../common/mixin.js'
 	
 	export default {
 		name: "Home",
@@ -70,6 +71,7 @@
 				scrollY:0
 			}
 		},
+		mixins:[imageListenerMixin],
 		computed:{
 			showGoods(){
 				return this.goods[this.currentType].list
@@ -86,7 +88,10 @@
 		},
 		//离开tab页签会调用
 		deactivated() {
+			//保存位置
 			this.scrollY=this.$refs.scroll.scrollY()
+			//事件总线销毁
+			this.$bus.$off('itemImageLoad',this.imageListener)
 		},
 		created(){
 			//1.请求数据
@@ -97,12 +102,7 @@
 			this.getHomeGoods('sell')
 		},
 		mounted() {
-			const refresh = debounce2(this.$refs.scroll.refresh,50)
-			//1.监听图片加载事件
-			this.$bus.$on('itemImageLoad',() => {
-				//this.debounce(this.$refs.scroll.refresh,50)
-				refresh()
-			})
+			console.log('home mounted...')
 		},
 		methods:{
 			debounce(fn,wait){
