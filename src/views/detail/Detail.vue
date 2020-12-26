@@ -1,14 +1,14 @@
 <template>
 	<div class="detail">
-		<detail-nav-bar class="detail-nav"/>
-		<scroll class="content1" ref="scroll">
+		<detail-nav-bar class="detail-nav" @detailNavClick="detailNavClick" ref="detailNav"/>
+		<scroll class="content1" ref="scroll" @scroll="contentScroll">
 		      <detail-swiper :top-images="topImages"/>
 		      <detail-base-info :goods="goods"/>
 		      <detail-shop-info :shop="shop"/>
 		      <detail-goods-info :detail-info="detailInfo" @imageLoad="imageLoad"/>
-			  <detail-param-info :param-info="detailParamInfo"/>
-			  <detai-comment-info :comment-info="commentInfo"/>
-			  <detail-goods-list :goods="recommends" />
+			  <detail-param-info ref="detailParamInfo" :param-info="detailParamInfo"/>
+			  <detai-comment-info ref="commentInfo" :comment-info="commentInfo"/>
+			  <detail-goods-list ref="recommends" :goods="recommends" />
 		</scroll>
 	</div>
 </template>
@@ -28,6 +28,7 @@
 	
 	import {getDetail,Goods,Shop,GoodsParam,getRecommend} from '../../network/detail.js'
 	import {imageListenerMixin} from '../../common/mixin.js'
+	import {debounce2} from '../../common/commonutils.js'
 	
 	export default{
 		name:"Detail",
@@ -40,7 +41,10 @@
 				detailInfo:{},
 				detailParamInfo:{},
 				commentInfo:{},
-				recommends:[]
+				recommends:[],
+				themeTopYs:[],
+				getThemeTopYs:null,
+				currentIndex:null
 			}
 		},
 		components:{
@@ -76,9 +80,19 @@
 					this.commentInfo=data.rate.list[0]
 				}
 			}),
+			//3.获取推荐信息
 			getRecommend().then(res =>{
 				this.recommends =res.data.list
-			})
+			}),
+			//4.给themeTopYs赋值，防抖
+			this.getThemeTopYs = debounce2(()=>{
+				this.themeTopYs=[]
+				this.themeTopYs.push(0)
+				this.themeTopYs.push(this.$refs.detailParamInfo.$el.offsetTop)
+				this.themeTopYs.push(this.$refs.commentInfo.$el.offsetTop)
+				this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
+				console.log(this.themeTopYs)
+			},200)
 			
 		},
 		mounted() {
@@ -90,6 +104,23 @@
 		 methods: {
 			  imageLoad() {
 				this.$refs.scroll.refresh()
+				this.getThemeTopYs()
+			  },
+			  detailNavClick(index){
+				  this.$refs.scroll.scrollTo(0,-this.themeTopYs[index],100)
+			  },
+			  //监听滚动，联动顶端的nav-bar
+			  contentScroll(position){
+				  const positionY = -position.y
+				  let length = this.themeTopYs.length
+				  for (let i = 0; i < length; i++) {
+				  	if(this.currentIndex!==i &&
+					((i<length-1 && positionY>=this.themeTopYs[i] && positionY<this.themeTopYs[i+1]) ||
+					(i===length-1 && positionY>this.themeTopYs[i]))){
+						this.currentIndex=i
+						this.$refs.detailNav.currentIndex = this.currentIndex
+					}
+				  }
 			  }
 			}
 	}

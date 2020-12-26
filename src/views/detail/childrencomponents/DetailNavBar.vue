@@ -26,13 +26,14 @@
 		},
 		data(){
 			return {
-				titles:['参数','详情','评价','推荐'],
+				titles:['商品','参数','评论','推荐'],
 				currentIndex:0
 			}
 		},
 		methods:{
 			itemClick(index){
 				this.currentIndex =index
+				this.$emit('detailNavClick',index)
 			},
 			backClick(){
 				this.$router.go(-1)
