@@ -10,6 +10,9 @@
 			  <detai-comment-info ref="commentInfo" :comment-info="commentInfo"/>
 			  <detail-goods-list ref="recommends" :goods="recommends" />
 		</scroll>
+		<detail-bottom-bar />
+		<!--当给组件进行事件监听的时候，需要.native-->
+		<back-top @click.native="backTopClick" v-show="isShowBackTop" />
 	</div>
 </template>
 
@@ -23,11 +26,12 @@
 	import DetailParamInfo from './childrencomponents/DetailParamInfo.vue'
 	import DetaiCommentInfo from './childrencomponents/DetailCommentInfo.vue'
 	import DetailGoodsList from '../../components/content/goods/GoodsList.vue'
+	import DetailBottomBar from './childrencomponents/DetailBottomBar.vue'
 	
 	import Scroll from 'components/common/scroll/Scroll'
 	
 	import {getDetail,Goods,Shop,GoodsParam,getRecommend} from '../../network/detail.js'
-	import {imageListenerMixin} from '../../common/mixin.js'
+	import {imageListenerMixin,backTopMixin} from '../../common/mixin.js'
 	import {debounce2} from '../../common/commonutils.js'
 	
 	export default{
@@ -56,9 +60,10 @@
 			DetailParamInfo,
 			DetaiCommentInfo,
 			DetailGoodsList,
+			DetailBottomBar,
 			Scroll
 		},
-		mixins:[imageListenerMixin],
+		mixins:[imageListenerMixin,backTopMixin],
 		created() {
 			//1.商品id保存
 			this.iid = this.$route.params.iid
@@ -91,6 +96,7 @@
 				this.themeTopYs.push(this.$refs.detailParamInfo.$el.offsetTop)
 				this.themeTopYs.push(this.$refs.commentInfo.$el.offsetTop)
 				this.themeTopYs.push(this.$refs.recommends.$el.offsetTop)
+				this.themeTopYs.push(Number.MAX_VALUE)
 				console.log(this.themeTopYs)
 			},200)
 			
@@ -113,14 +119,14 @@
 			  contentScroll(position){
 				  const positionY = -position.y
 				  let length = this.themeTopYs.length
-				  for (let i = 0; i < length; i++) {
-				  	if(this.currentIndex!==i &&
-					((i<length-1 && positionY>=this.themeTopYs[i] && positionY<this.themeTopYs[i+1]) ||
-					(i===length-1 && positionY>this.themeTopYs[i]))){
+				  for (let i = 0; i < length-1; i++) {
+				  	if(this.currentIndex!==i &&(positionY>=this.themeTopYs[i] && positionY<this.themeTopYs[i+1]))
+					{
 						this.currentIndex=i
 						this.$refs.detailNav.currentIndex = this.currentIndex
 					}
 				  }
+				  this.backTopListener(position)
 			  }
 			}
 	}
@@ -141,6 +147,6 @@
 	  }
 	
 	  .content1 {
-	    height: calc(100% - 44px);
+	    height: calc(100% - 44px - 49px);
 	  }
 </style>
