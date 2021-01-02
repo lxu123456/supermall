@@ -25,10 +25,10 @@
 
 <style>
 	.cart-list{
-		height: 100vh;
+		height: calc(100% - 44px - 49px - 40px);
 	}
 	.content2{
-		height: calc(100% - 44px - 49px);
+		height: 100%;
 		overflow: hidden;
 	}
 </style>

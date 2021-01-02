@@ -12,7 +12,7 @@
     props: {
 		  value: {
 		    type: Boolean,
-        default: true
+			default: true
       }
     },
     data: function () {

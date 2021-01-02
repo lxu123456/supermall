@@ -4,18 +4,21 @@
 			  <div slot="center">购物车({{$store.state.carList.length}})</div>
 		</nav-bar>
 		<cart-list></cart-list>
+		<cart-buttom-bar></cart-buttom-bar>
 	</div>
 </template>
 
 <script>
   import NavBar from '../../components/common/navbar/NavBar.vue'
   import CartList from './childrenComponents/CartList.vue'
+  import CartButtomBar from './childrenComponents/CartButtomBar.vue'
   
   export default {
     name: "Cart",
 	components:{
 		NavBar,
-		CartList
+		CartList,
+		CartButtomBar
 	}
   }
 </script>
