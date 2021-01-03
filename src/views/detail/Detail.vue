@@ -138,6 +138,8 @@
 				  product.iid =this.iid;
 				  //2.将商品添加到购物车
 				  this.$store.dispatch('addCart',product)
+				  console.log(this.$toast)
+				  this.$toast.show('添加商品成功',2000)
 			  }
 			}
 	}
