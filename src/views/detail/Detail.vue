@@ -137,9 +137,9 @@
 				  product.price =this.goods.realPrice;
 				  product.iid =this.iid;
 				  //2.将商品添加到购物车
-				  this.$store.dispatch('addCart',product)
-				  console.log(this.$toast)
-				  this.$toast.show('添加商品成功',2000)
+				  this.$store.dispatch('addCart',product).then((res) =>{
+					   this.$toast.show(res,2000)
+				  })
 			  }
 			}
 	}
